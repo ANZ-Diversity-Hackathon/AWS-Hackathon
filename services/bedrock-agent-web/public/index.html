@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Bedrock Agent Chat</title>
+  <style>
+    body { font-family: system-ui, Arial; margin: 0; background: #f6f6f6; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 16px; }
+    .card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 8px rgba(0,0,0,.08); }
+    #chat { height: 60vh; overflow:auto; border: 1px solid #eee; border-radius: 10px; padding: 12px; background:#fafafa;}
+    .msg { margin: 10px 0; }
+    .me { font-weight: 600; }
+    .bot { font-weight: 600; }
+    .row { display:flex; gap: 8px; margin-top: 12px; }
+    input[type="text"] { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; }
+    button { padding: 12px 14px; border-radius: 10px; border: 1px solid #ddd; background:#fff; cursor:pointer; }
+    button:hover { background:#f0f0f0; }
+    .small { color:#666; font-size: 12px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h2 style="margin-top:0;">Chat with Bedrock Agent</h2>
+      <div id="chat"></div>
+
+      <div class="row">
+        <input id="text" type="text" placeholder="Type a message..."/>
+        <button id="send">Send</button>
+        <label style="display:inline-flex;align-items:center;gap:8px;">
+          <input id="file" type="file" accept="image/*,application/pdf" style="display:none;"/>
+          <button id="uploadBtn" type="button">Upload receipt</button>
+        </label>
+      </div>
+
+      <div class="small">
+        Tip: 上传成功后会自动把 S3 bucket/key 发给 agent，让它调用 action group 处理 Textract。
+      </div>
+    </div>
+  </div>
+
+<script>
+  const chat = document.getElementById("chat");
+  const text = document.getElementById("text");
+  const sendBtn = document.getElementById("send");
+  const fileInput = document.getElementById("file");
+  const uploadBtn = document.getElementById("uploadBtn");
+
+  // 简单 sessionId（同一个浏览器会话保持上下文）
+  const sessionId =
+  localStorage.getItem("sessionId") ||
+  (window.crypto?.randomUUID
+    ? crypto.randomUUID()
+    : Date.now().toString());
+
+  localStorage.setItem("sessionId", sessionId);
+
+
+  function add(role, content) {
+    const div = document.createElement("div");
+    div.className = "msg";
+    div.innerHTML = `<span class="${role}">${role === "me" ? "You" : "Agent"}:</span> ${content}`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  async function sendMessage(message) {
+    add("me", escapeHtml(message));
+    const resp = await fetch("/api/chat", {
+      method: "POST",
+      headers: {"content-type":"application/json"},
+      body: JSON.stringify({ message, sessionId })
+    }).then(r => r.json());
+
+    if (!resp.ok) {
+      add("bot", "Error: " + escapeHtml(resp.error || "unknown"));
+    } else {
+      add("bot", escapeHtml(resp.text || ""));
+    }
+  }
+
+  sendBtn.onclick = () => {
+    const m = text.value.trim();
+    if (!m) return;
+    text.value = "";
+    sendMessage(m);
+  };
+
+  text.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendBtn.click();
+  });
+
+  uploadBtn.onclick = () => fileInput.click();
+
+  fileInput.onchange = async () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+
+    add("me", `Uploading: ${escapeHtml(f.name)} ...`);
+
+    // 1) get presigned url
+    const pres = await fetch("/api/presign", {
+      method: "POST",
+      headers: {"content-type":"application/json"},
+      body: JSON.stringify({
+        filename: f.name,
+        contentType: f.type || "application/octet-stream",
+        userId: "demo"   // 你可改成登录后的真实用户ID
+      })
+    }).then(r => r.json());
+
+    if (!pres.ok) {
+      add("bot", "Presign error: " + escapeHtml(pres.error || "unknown"));
+      return;
+    }
+
+    // 2) upload to s3 via PUT
+    const putResp = await fetch(pres.uploadUrl, {
+      method: "PUT",
+      headers: { "content-type": f.type || "application/octet-stream" },
+      body: f
+    });
+
+    if (!putResp.ok) {
+      add("bot", "Upload failed: HTTP " + putResp.status);
+      return;
+    }
+
+    add("me", `Uploaded OK. bucket=${escapeHtml(pres.bucket)} key=${escapeHtml(pres.key)}`);
+
+    // 3) tell agent to process it (agent will call your action group)
+    const msg = `I uploaded a receipt image. Please process it via the receipt-processing action.
+bucket: ${pres.bucket}
+key: ${pres.key}
+user_id: demo`;
+    await sendMessage(msg);
+  };
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+</script>
+</body>
+</html>
