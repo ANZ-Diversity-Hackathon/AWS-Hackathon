@@ -41,7 +41,7 @@ app.post("/api/presign", async (req, res) => {
     }
     const safeUser = (userId || "demo").replace(/[^a-zA-Z0-9_-]/g, "");
     const ext = path.extname(filename).toLowerCase() || "";
-    const id = crypto.randomUUID();
+    const id = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex");
     const key = `${UPLOAD_PREFIX}${safeUser}/${Date.now()}_${id}${ext}`;
 
     const cmd = new PutObjectCommand({
@@ -62,6 +62,13 @@ app.post("/api/presign", async (req, res) => {
 // sessionId：前端传一个固定的，保持上下文
 app.post("/api/chat", async (req, res) => {
   try {
+    console.log("Incoming chat:", {
+      hasBody: !!req.body,
+      sessionId: req.body?.sessionId,
+      messageLen: req.body?.message?.length,
+    });
+    console.log("Agent:", { AGENT_ID, AGENT_ALIAS_ID });
+
     const { message, sessionId } = req.body || {};
     if (!message) return res.status(400).json({ ok: false, error: "message required" });
 
@@ -74,7 +81,6 @@ app.post("/api/chat", async (req, res) => {
 
     const resp = await br.send(cmd);
 
-    // InvokeAgent 是流式返回（chunks）。这里做一个最小的“拼接文本”
     let text = "";
     if (resp.completion) {
       for await (const chunkEvent of resp.completion) {
@@ -85,10 +91,11 @@ app.post("/api/chat", async (req, res) => {
 
     return res.json({ ok: true, text });
   } catch (e) {
-    console.error(e);
+    console.error("❌ /api/chat error:", e);
     return res.status(500).json({ ok: false, error: String(e) });
   }
 });
+
 
 // ====== start ======
 const port = process.env.PORT || 3000;

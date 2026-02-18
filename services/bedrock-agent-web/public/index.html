@@ -48,8 +48,14 @@
   const uploadBtn = document.getElementById("uploadBtn");
 
   // 简单 sessionId（同一个浏览器会话保持上下文）
-  const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
+  const sessionId =
+  localStorage.getItem("sessionId") ||
+  (window.crypto?.randomUUID
+    ? crypto.randomUUID()
+    : Date.now().toString());
+
   localStorage.setItem("sessionId", sessionId);
+
 
   function add(role, content) {
     const div = document.createElement("div");
