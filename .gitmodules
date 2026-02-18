@@ -1,0 +1,3 @@
+[submodule "services/bedrock-agent-web"]
+	path = services/bedrock-agent-web
+	url = git@github.com:ANZ-Diversity-Hackathon/Hackathon-web-repo.git
