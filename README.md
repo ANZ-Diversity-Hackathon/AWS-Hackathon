@@ -1,17 +1,52 @@
-# Project Title
+# Money Mind — Finance Copilot (AWS Agentic AI Hackathon)
 
-One-line summary: [What we built, for whom, and the core outcome.]
+Money Mind is an AI-powered finance copilot that helps users understand receipts/transactions, organize spending records, and generate actionable budgeting and saving suggestions based on real spending behavior.
 
-## Submission links
-- Use case (<= 500 words): docs/use-case.md
-- Architecture diagram: architecture/diagram.png
-- Demo video (<= 3 minutes): demo/video-link.md
-- Live link (optional): [add link here or remove this line]
+This repository contains the hackathon submission materials (use case, architecture diagram, demo video) and the implementation scaffolding (services and infrastructure as code).
 
-## Quick overview
-1) Input: [e.g., receipt image / user upload / event]
-2) Process: [Bedrock Agent + tools]
-3) Output: [JSON/report/decision]
+---
+
+## What’s in this repo
+
+- **Use Case Documentation (required)**: `docs/use-case.md`
+- **Architecture Diagram (required)**: `aws diagram.png`
+- **Video Demonstration (required)**: `demo/video-link.md`
+- **Live Link (optional)**: `demo/live-link.md` (if provided)
+
+---
+
+## Architecture Overview
+
+High-level AWS architecture and end-to-end data flow are documented in:
+
+- `aws diagram.png`
+
+The architecture diagram is used to clearly communicate:
+- key AWS components and responsibilities,
+- the end-to-end data flow (input → processing → storage → response),
+- integration points and security boundaries (where authentication/permissions apply).
+
+---
+
+## Demo
+
+- Video demo: see `demo/video-link.md`
+- Live link (optional): see `demo/live-link.md`
+
+---
+
+## Repository Structure
+
+```text
+.
+├── docs/                  # Documentation (use case, notes)
+│   └── use-case.md
+├── demo/                  # Demo assets/links (video, live link)
+│   └── video-link.md
+├── infra/terraform/       # Infrastructure as Code (Terraform)
+├── services/              # Application / backend services (and web submodule if present)
+├── aws diagram.png        # Architecture diagram (required)
+└── README.md
 
 ## Security
-This is a public repo. No credentials/secrets are committed.
+This is a public repository. No credentials or secrets are committed.
