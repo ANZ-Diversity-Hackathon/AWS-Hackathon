@@ -28,25 +28,11 @@ The architecture diagram is used to clearly communicate:
 
 ---
 
-## Demo
-
-- Video demo: see `demo/video-link.md`
-- Live link (optional): see `demo/live-link.md`
-
----
-
-## Repository Structure
-
-```text
-.
-├── docs/                  # Documentation (use case, notes)
-│   └── use-case.md
-├── demo/                  # Demo assets/links (video, live link)
-│   └── video-link.md
-├── infra/terraform/       # Infrastructure as Code (Terraform)
-├── services/              # Application / backend services (and web submodule if present)
-├── aws diagram.png        # Architecture diagram (required)
-└── README.md
+## Submission Links
+- Use Case (required): [docs/use-case.md](docs/use-case.md)
+- Architecture Diagram (required): [aws diagram.png](aws%20diagram.png)
+- Video Demo (required): [demo/video-link.md](demo/video-link.md)
+- Live Link (optional): <PASTE_YOUR_URL_HERE>  <!-- 或者改成 [demo/live-link.md](demo/live-link.md) -->
 
 ## Security
 This is a public repository. No credentials or secrets are committed.
