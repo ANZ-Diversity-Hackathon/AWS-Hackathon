@@ -15,19 +15,6 @@ This repository contains the hackathon submission materials (use case, architect
 
 ---
 
-## Architecture Overview
-
-High-level AWS architecture and end-to-end data flow are documented in:
-
-- `aws diagram.png`
-
-The architecture diagram is used to clearly communicate:
-- key AWS components and responsibilities,
-- the end-to-end data flow (input → processing → storage → response),
-- integration points and security boundaries (where authentication/permissions apply).
-
----
-
 ## Submission Links
 - Use Case (required): [docs/use-case.md](docs/use-case.md)
 - Architecture Diagram (required): [aws diagram.png](aws%20diagram.png)
