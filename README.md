@@ -11,7 +11,7 @@ This repository contains the hackathon submission materials (use case, architect
 - **Use Case Documentation (required)**: `docs/use-case.md`
 - **Architecture Diagram (required)**: `aws diagram.png`
 - **Video Demonstration (required)**: `demo/video-link.md`
-- **Live Link (optional)**: `demo/live-link.md` (if provided)
+- **Live Link (optional)**: http://13.54.200.56:3000 Deployed on AWS EC2 (Currently paused for cost optimization. Available upon request.)
 
 ---
 
@@ -19,7 +19,7 @@ This repository contains the hackathon submission materials (use case, architect
 - Use Case (required): [docs/use-case.md](docs/use-case.md)
 - Architecture Diagram (required): [aws diagram.png](aws%20diagram.png)
 - Video Demo (required): [demo/video-link.md](demo/video-link.md)
-- Live Link (optional): http://13.54.200.56:3000
+- Live Link (optional): http://13.54.200.56:3000 Deployed on AWS EC2 (Currently paused for cost optimization. Available upon request.)
 
 ## Security
 This is a public repository. No credentials or secrets are committed.
