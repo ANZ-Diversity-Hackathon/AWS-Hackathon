@@ -19,7 +19,7 @@ This repository contains the hackathon submission materials (use case, architect
 - Use Case (required): [docs/use-case.md](docs/use-case.md)
 - Architecture Diagram (required): [aws diagram.png](aws%20diagram.png)
 - Video Demo (required): [demo/video-link.md](demo/video-link.md)
-- Live Link (optional): <PASTE_YOUR_URL_HERE>  <!-- 或者改成 [demo/live-link.md](demo/live-link.md) -->
+- Live Link (optional): http://13.54.200.56:3000
 
 ## Security
 This is a public repository. No credentials or secrets are committed.
